@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public static partial class Config
 {
@@ -14,6 +12,7 @@ public static partial class Config
     const int face = 1;
     const int background = 0;
     const int table = 0;
+    const int language = 1;
     #endregion
     #region Game properties
     public static bool specialCards = false;

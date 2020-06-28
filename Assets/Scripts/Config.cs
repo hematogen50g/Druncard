@@ -1,38 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public enum VarName { Players,Cards,AutoBet,TwoBeatsAce,UntilOneEliminated,Giveaway,Face,Background,Table}
+public enum VarName { Players,Cards,AutoBet,TwoBeatsAce,UntilOneEliminated,Giveaway,Face,Background,Table,Language}
 public static partial class Config
 {
     #region Developer
     public static bool ShowPlayerState { get; } = false;
     #endregion
     #region Words
-    private static string yes = "Да", no = "Нет";
-    public static string VictoryMessage { get; } = "Вы выиграли!";
-    public static string DefeatMessage { get; } = "Вы проиграли";
-    
+    private static string Yes {get { return LocalizationSystem.GetLocalizedValue("yes"); }}
+    private static string No { get { return LocalizationSystem.GetLocalizedValue("no"); } }
+    public static string VictoryMessage { get { return LocalizationSystem.GetLocalizedValue("victory"); } }
+    public static string DefeatMessage { get { return LocalizationSystem.GetLocalizedValue("defeat"); } }
+
     public static string LowestCardBeatsAce() 
     {
         if (Cards == MaxCards)
-            return "Двойка бьёт туза";
+            return LocalizationSystem.GetLocalizedValue("two_beats_ace");
         else
-            return "Шестёрка бьёт туза";
+            return LocalizationSystem.GetLocalizedValue("six_beats_ace");
     }
     private static int takenName;
 
-    private static string[] playerNames = { "Вася","Петя", "Лёха", "Витёк", "Павлик", "Толик", "Серый", "Ваха",
-        "Колян", "Поликарп", "Арчибальд", "Капитон", "Жека", "Витальсон","Жора","Гоша","Ержан","Тагир","Лёва",
-        "Пафнутий","Феля","Сёма","Иоганн","Артём","Мишаня","Олег" };
+    private static string[] PlayerNames
+    {
+        get { return LocalizationSystem.GetLocalizedNames(LocalizationSystem.language); }
+    }
     public static string GetRandomPlayerName()
     {
         //this guarantees players names will be different from each other.
         int a = takenName;
         while(a==takenName)
-            a = Random.Range(0, playerNames.Length);
+            a = UnityEngine.Random.Range(0, PlayerNames.Length);
         takenName = a;
-        return playerNames[a];
+        return PlayerNames[a];
     }
     #endregion
     #region Common Properties
@@ -51,9 +54,9 @@ public static partial class Config
         get
         {
             if (Giveaway)
-                return yes;
+                return Yes;
             else
-                return no;
+                return No;
         }
     }
     public static string UntilOneEliminatedString
@@ -61,9 +64,9 @@ public static partial class Config
         get
         {
             if (UntilOneEliminated)
-                return yes;
+                return Yes;
             else
-                return no;
+                return No;
         }
     }
     public static string TwoBeatsAceString
@@ -71,9 +74,9 @@ public static partial class Config
         get
         {
             if (TwoBeatsAce)
-                return yes;
+                return Yes;
             else
-                return no; 
+                return No; 
         }
     }
     public static int LowestRank
@@ -95,9 +98,9 @@ public static partial class Config
         get
         {
             if (AutoBet)
-                return yes;
+                return Yes;
             else 
-                return no;
+                return No;
         }
     }
 
@@ -111,8 +114,9 @@ public static partial class Config
     public static int CardsFace { get; private set; } = face;
     public static int CardsBackground { get; private set; } = background;
     public static int Table { get; private set; } = table;
+    public static int Language { get; private set; } = language;
 
-    private static int totalFaces, totalBackgrounds, totalTables;
+    private static int totalFaces, totalBackgrounds, totalTables,totalLanguages;
 
     #endregion
     public static void Init(int faces,int backgrounds,int tables)
@@ -120,9 +124,11 @@ public static partial class Config
         totalFaces = faces;
         totalBackgrounds = backgrounds;
         totalTables = tables;
+        totalLanguages = Enum.GetNames(typeof(LocalizationSystem.Language)).Length;
     }    
     public static void ResetToDefaults()
     {
+        Language = language;
         Table = table;
         CardsBackground = table;
         CardsFace = table;
@@ -180,6 +186,13 @@ public static partial class Config
                 Table++;
                 if (Table >= totalTables)
                     Table = 0;
+                break;
+
+            case VarName.Language:
+                Language++;
+                if (Language >= totalLanguages)
+                    Language = 0;
+
                 break;
             case VarName.AutoBet:
                 AutoBet = !AutoBet;
@@ -245,7 +258,11 @@ public static partial class Config
             case VarName.Table:
                 if (val < totalTables && val >= 0)
                     Table = val;
-                break;                           
+                break;
+            case VarName.Language:
+                if (val < totalLanguages && val >= 0)
+                    Language = val;
+                break;
         }
     }
 

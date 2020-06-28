@@ -18,6 +18,9 @@ public class Options : MonoBehaviour
 
     public Sprite[] faces = null, backgrounds = null, tables = null;
     public Sprite CardBackground { get { return backgrounds[Config.CardsBackground]; } }
+    public Sprite[] flags;
+    [SerializeField]
+    private Image countryFlag;
 
     public void SwitchCards()
     {
@@ -71,6 +74,29 @@ public class Options : MonoBehaviour
         table.sprite = tables[Config.Table];
         main.SetTableSprite(table.sprite);
     }
+    public void SwitchLanguage()
+    {       
+        Config.SwitchVar(VarName.Language);
+        UpdateLanguageUI();
+    }
+    public void UpdateLanguageUI()
+    {
+        LocalizationSystem.language = (LocalizationSystem.Language)Config.Language;
+        var uis = FindObjectsOfType<LocalizerUI>();
+        //print(" UIS " + uis.Length);
+        foreach (var item in uis)
+        {
+            //print(" loc key " + item.key);
+            item.SetLocalizedValue();
+        }
+        // update all "yes" and "no"s
+        autoBetButton.text = Config.AutoBetString;
+        twoBeatsButton.text = Config.TwoBeatsAceString;
+        untilOneEliminatedButton.text = Config.UntilOneEliminatedString;
+        giveawayButton.text = Config.GiveawayString;
+
+        countryFlag.sprite = flags[Config.Language];
+    }
     /// <summary>
     /// If true sets white color else - red color
     /// </summary>
@@ -109,7 +135,9 @@ public class Options : MonoBehaviour
     }
     Main main;
     private void ReadSettingsFromConfig()
-    {       
+    {
+        UpdateLanguageUI();
+
         cardFace.sprite = faces[Config.CardsFace];
         cardBackground.sprite = backgrounds[Config.CardsBackground];
 
@@ -176,7 +204,8 @@ public class Options : MonoBehaviour
         PlayerPrefs.SetInt("Face", Config.CardsFace);
         PlayerPrefs.SetInt("Background", Config.CardsBackground);
         PlayerPrefs.SetInt("Table", Config.Table);
-        //print("Write table" + Config.Table);
+        PlayerPrefs.SetInt("Language", Config.Language);
+
         if (Config.TwoBeatsAce)
             PlayerPrefs.SetInt("TwoBeatsAce", 1);
         else
