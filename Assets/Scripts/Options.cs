@@ -177,11 +177,18 @@ public class Options : MonoBehaviour
         VarName v = 0;
         int i = 0;
         string varName = VarName.Players.ToString();
-
+        // check language and set default
+        if (!PlayerPrefs.HasKey(VarName.Language.ToString()))
+        {
+            //if user runs the game for the first time
+            if (Application.systemLanguage ==  SystemLanguage.English)
+                Config.SetVar(VarName.Language, 0);
+            else if(Application.systemLanguage == SystemLanguage.Russian)
+                Config.SetVar(VarName.Language, 1);
+        }
         //iterate through enum.
         //while enum has such name.
-        //when getting out of enum`s range varName will become integer without name.
-
+        //when getting out of enum`s range varName will become integer without name.        
         while (varName != i.ToString())
         {
             int c;

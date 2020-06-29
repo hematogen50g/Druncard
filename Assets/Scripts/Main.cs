@@ -155,7 +155,6 @@ public class Main : MonoBehaviour
         //activePlayers[2].MakeAllCardsHighestRank(); 
     }
     #endregion
-
     #region Game status
     public bool CheckVictoryConditions()
     {
